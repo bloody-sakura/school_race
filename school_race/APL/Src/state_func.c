@@ -1,5 +1,9 @@
 #include "state_func.h"
-
+STATEMODE state_mode =
+    {
+        .cur_mode = DISABLED,
+        .set_mode = DISABLED,
+};
 float L2D(float lenth) // 将运动的距离转化成要转角度
 {
     return (lenth);
@@ -20,18 +24,25 @@ bool isDone(float feedback, float target) // 判断电机是否运动到指定�
     return false;
 }
 
-
-void state_func(STATEMODE state_mode) // 负责设定PID的目标值
+void state_func(STATEMODE statemode) // 负责设定PID的目标值
 {
-    switch (state_mode.cur_mode)
+    switch (statemode.cur_mode)
     {
+
+    case DISABLED:
+    {
+        DJmotor[0].Begin = 0;
+        DJmotor[1].Begin = 0;
+        DoneSignal = true;
+    }
+    break;
     case IDLE:
     {
-        DJmotor[0].Begin=1;
-        DJmotor[1].Begin=1;
+        DJmotor[0].Begin = 1;
+        DJmotor[1].Begin = 1;
         DJmotor[0].valSet.angle_deg = 0;
 
-        DJmotor[1].valSet.angle_deg= 0;
+        DJmotor[1].valSet.angle_deg = 0;
         if (isDone(DJmotor[0].valNow.angle_deg, 0) && isDone(DJmotor[1].valNow.angle_deg, 0))
             DoneSignal = true;
     }
@@ -39,7 +50,7 @@ void state_func(STATEMODE state_mode) // 负责设定PID的目标值
 
     case GROUND_CATCH:
     {
-        DJmotor[0].valSet.angle_deg= L2D(GROUND_CATCH_HEIGHT);
+        DJmotor[0].valSet.angle_deg = L2D(GROUND_CATCH_HEIGHT);
 
         DJmotor[1].valSet.angle_deg = L2D(GROUND_CATCH_LENTH);
         if (isDone(DJmotor[0].valNow.angle_deg, L2D(GROUND_CATCH_HEIGHT)) && isDone(DJmotor[1].valNow.angle_deg, L2D(GROUND_CATCH_LENTH)))
@@ -57,7 +68,7 @@ void state_func(STATEMODE state_mode) // 负责设定PID的目标值
 
     case GROUND_DROP:
     {
-        DJmotor[0].valSet.angle_deg= L2D(GROUND_DROP_HEIGHT);
+        DJmotor[0].valSet.angle_deg = L2D(GROUND_DROP_HEIGHT);
         if (isDone(DJmotor[0].valNow.angle_deg, L2D(GROUND_DROP_HEIGHT)))
             DoneSignal = true;
     }
@@ -67,7 +78,7 @@ void state_func(STATEMODE state_mode) // 负责设定PID的目标值
     {
         DJmotor[0].valSet.angle_deg = L2D(SKY_CATCH_HEIGHT);
 
-        DJmotor[1].valSet.angle_deg= L2D(SKY_CATCH_LENTH);
+        DJmotor[1].valSet.angle_deg = L2D(SKY_CATCH_LENTH);
         if (isDone(DJmotor[0].valNow.angle_deg, L2D(SKY_CATCH_HEIGHT)) && isDone(DJmotor[1].valNow.angle_deg, L2D(SKY_CATCH_LENTH)))
             DoneSignal = true;
     }
@@ -75,7 +86,7 @@ void state_func(STATEMODE state_mode) // 负责设定PID的目标值
 
     case SKY_LIFT:
     {
-        DJmotor[0].valSet.angle_deg= L2D(SKY_LIFT_HEIGHT);
+        DJmotor[0].valSet.angle_deg = L2D(SKY_LIFT_HEIGHT);
         if (isDone(DJmotor[0].valNow.angle_deg, L2D(SKY_LIFT_HEIGHT)))
             DoneSignal = true;
     }
@@ -83,9 +94,9 @@ void state_func(STATEMODE state_mode) // 负责设定PID的目标值
 
     case BALL_CATCH:
     {
-        DJmotor[0].valSet.angle_deg= L2D(BALL_CATCH_HEIGHT);
+        DJmotor[0].valSet.angle_deg = L2D(BALL_CATCH_HEIGHT);
 
-        DJmotor[1].valSet.angle_deg=L2D(BALL_CATCH_LENTH) ;
+        DJmotor[1].valSet.angle_deg = L2D(BALL_CATCH_LENTH);
 
         if (isDone(DJmotor[0].valNow.angle_deg, L2D(BALL_CATCH_HEIGHT)) && isDone(DJmotor[1].valNow.angle_deg, L2D(BALL_CATCH_LENTH)))
             DoneSignal = true;
@@ -94,7 +105,7 @@ void state_func(STATEMODE state_mode) // 负责设定PID的目标值
 
     case BALL_LIFT:
     {
-        DJmotor[0].valSet.angle_deg= L2D(BALL_LIFT_HEIGHT);
+        DJmotor[0].valSet.angle_deg = L2D(BALL_LIFT_HEIGHT);
         if (isDone(DJmotor[0].valNow.angle_deg, L2D(BALL_LIFT_HEIGHT)))
             DoneSignal = true;
     }
@@ -102,7 +113,7 @@ void state_func(STATEMODE state_mode) // 负责设定PID的目标值
 
     case BALL_DROP:
     {
-        DJmotor[0].valSet.angle_deg= L2D(GROUND_DROP_HEIGHT);
+        DJmotor[0].valSet.angle_deg = L2D(GROUND_DROP_HEIGHT);
         if (isDone(DJmotor[0].valNow.angle_deg, L2D(GROUND_DROP_HEIGHT)))
             DoneSignal = true;
     }
@@ -119,6 +130,73 @@ void state_func(STATEMODE state_mode) // 负责设定PID的目标值
     {
         claw_off();
         DoneSignal = true;
+    }
+    break;
+    }
+}
+
+void state_receive(CAN_RxHeaderTypeDef Rxheader, uint8_t *Rx_data)
+{
+    if ((Rxheader.IDE != CAN_ID_EXT) ||
+        (Rxheader.RTR != CAN_RTR_DATA) ||
+        (Rxheader.StdId < 0x01010401) || (Rxheader.StdId > 0x01010408))
+    {
+        return;
+    }
+
+    uint8_t msg = (uint8_t)(Rxheader.ExtId - 0x0101040U); /* 1..8 */
+    switch (msg)
+    {
+    case 1:
+    {
+        if (Rx_data[0] == 'M' && Rx_data[1] == 1)
+            state_mode.set_mode = IDLE;
+        if (Rx_data[0] == 'M' && Rx_data[1] == 0)
+            state_mode.set_mode = DISABLED;
+    }
+    break;
+    case 2:
+    {
+        if (Rx_data[0] == 'R' && Rx_data[1] == 1)
+            state_mode.set_mode = CLAW_ON;
+        if (Rx_data[0] == 'R' && Rx_data[1] == 0)
+            state_mode.set_mode = CLAW_OFF;
+    }
+    break;
+    case 3:
+    {
+        if (Rx_data[0] == 'G' && Rx_data[1] == 'E')
+            state_mode.set_mode = GROUND_CATCH;
+    }
+    break;
+    case 4:
+    {
+        if (Rx_data[0] == 'P' && Rx_data[1] == 'E')
+            state_mode.set_mode = GROUND_DROP;
+    }
+    break;
+    case 5:
+    {
+        if (Rx_data[0] == 'G' && Rx_data[1] == 'S')
+            state_mode.set_mode = SKY_CATCH;
+    }
+    break;
+    case 6:
+    {
+        if (Rx_data[0] == 'T' && Rx_data[1] == 'S')
+            state_mode.set_mode = SKY_LIFT;
+    }
+    break;
+    case 7:
+    {
+        if (Rx_data[0] == 'G' && Rx_data[1] == 'B')
+            state_mode.set_mode = BALL_CATCH;
+    }
+    break;
+    case 8:
+    {
+        if (Rx_data[0] == 'P' && Rx_data[1] == 'B')
+            state_mode.set_mode = BALL_DROP;
     }
     break;
     }

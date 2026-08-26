@@ -44,7 +44,7 @@ void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan)
     {
         if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO1, &RxHeader, RxData) == HAL_OK)
         {
-
+             state_receive(RxHeader, RxData);
         }
     }
     else if (hcan->Instance == CAN2)

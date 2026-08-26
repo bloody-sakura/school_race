@@ -1,11 +1,7 @@
 #include "myostasks.h"
 
 uint8_t BeepAlarmTimes = 0;
-STATEMODE state_mode =
-    {
-        .cur_mode = IDLE,
-        .set_mode = IDLE,
-};
+
 void LedWaterTask(void *argument)
 {
   for (;;)

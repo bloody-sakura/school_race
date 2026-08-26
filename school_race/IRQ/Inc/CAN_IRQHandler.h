@@ -12,6 +12,7 @@
 #include "EXTI_IRQHandler.h"
 #include "main.h"
 #include "can.h"
+#include "state_func.h"
 
 
 
