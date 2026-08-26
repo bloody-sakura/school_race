@@ -27,28 +27,29 @@ void state_func(STATEMODE state_mode) // 负责设定PID的目标值
     {
     case IDLE:
     {
-        DJmotor[0].posPID.SetVal = 0;
+        DJmotor[0].Begin=1;
+        DJmotor[1].Begin=1;
+        DJmotor[0].valSet.angle_deg = 0;
 
-        DJmotor[1].posPID.SetVal = 0;
+        DJmotor[1].valSet.angle_deg= 0;
         if (isDone(DJmotor[0].valNow.angle_deg, 0) && isDone(DJmotor[1].valNow.angle_deg, 0))
             DoneSignal = true;
-            Beep_Alarm(3);
     }
     break;
 
     case GROUND_CATCH:
     {
-        DJmotor[0].posPID.SetVal = L2D(GROUND_CATCH_HEIGHT);
+        DJmotor[0].valSet.angle_deg= L2D(GROUND_CATCH_HEIGHT);
 
-        DJmotor[1].posPID.SetVal = GROUND_CATCH_LENTH;
-        if (isDone(DJmotor[0].valNow.angle_deg, L2D(GROUND_CATCH_HEIGHT)) && isDone(DJmotor[1].valNow.angle_deg, GROUND_CATCH_LENTH))
+        DJmotor[1].valSet.angle_deg = L2D(GROUND_CATCH_LENTH);
+        if (isDone(DJmotor[0].valNow.angle_deg, L2D(GROUND_CATCH_HEIGHT)) && isDone(DJmotor[1].valNow.angle_deg, L2D(GROUND_CATCH_LENTH)))
             DoneSignal = true;
     }
     break;
 
     case GROUND_LIFT:
     {
-        DJmotor[0].posPID.SetVal = L2D(GROUND_LIFT_HEIGHT);
+        DJmotor[0].valSet.angle_deg = L2D(GROUND_LIFT_HEIGHT);
         if (isDone(DJmotor[0].valNow.angle_deg, L2D(GROUND_LIFT_HEIGHT)))
             DoneSignal = true;
     }
@@ -56,7 +57,7 @@ void state_func(STATEMODE state_mode) // 负责设定PID的目标值
 
     case GROUND_DROP:
     {
-        DJmotor[0].posPID.SetVal = L2D(GROUND_DROP_HEIGHT);
+        DJmotor[0].valSet.angle_deg= L2D(GROUND_DROP_HEIGHT);
         if (isDone(DJmotor[0].valNow.angle_deg, L2D(GROUND_DROP_HEIGHT)))
             DoneSignal = true;
     }
@@ -64,17 +65,17 @@ void state_func(STATEMODE state_mode) // 负责设定PID的目标值
 
     case SKY_CATCH:
     {
-        DJmotor[0].posPID.SetVal = L2D(SKY_CATCH_HEIGHT);
+        DJmotor[0].valSet.angle_deg = L2D(SKY_CATCH_HEIGHT);
 
-        DJmotor[1].posPID.SetVal = SKY_CATCH_LENTH;
-        if (isDone(DJmotor[0].valNow.angle_deg, L2D(SKY_CATCH_HEIGHT)) && isDone(DJmotor[1].valNow.angle_deg, SKY_CATCH_LENTH))
+        DJmotor[1].valSet.angle_deg= L2D(SKY_CATCH_LENTH);
+        if (isDone(DJmotor[0].valNow.angle_deg, L2D(SKY_CATCH_HEIGHT)) && isDone(DJmotor[1].valNow.angle_deg, L2D(SKY_CATCH_LENTH)))
             DoneSignal = true;
     }
     break;
 
     case SKY_LIFT:
     {
-        DJmotor[0].posPID.SetVal = L2D(SKY_LIFT_HEIGHT);
+        DJmotor[0].valSet.angle_deg= L2D(SKY_LIFT_HEIGHT);
         if (isDone(DJmotor[0].valNow.angle_deg, L2D(SKY_LIFT_HEIGHT)))
             DoneSignal = true;
     }
@@ -82,18 +83,18 @@ void state_func(STATEMODE state_mode) // 负责设定PID的目标值
 
     case BALL_CATCH:
     {
-        DJmotor[0].posPID.SetVal = L2D(BALL_CATCH_HEIGHT);
+        DJmotor[0].valSet.angle_deg= L2D(BALL_CATCH_HEIGHT);
 
-        DJmotor[1].posPID.SetVal = BALL_CATCH_LENTH;
+        DJmotor[1].valSet.angle_deg=L2D(BALL_CATCH_LENTH) ;
 
-        if (isDone(DJmotor[0].valNow.angle_deg, L2D(BALL_CATCH_HEIGHT)) && isDone(DJmotor[1].valNow.angle_deg, BALL_CATCH_LENTH))
+        if (isDone(DJmotor[0].valNow.angle_deg, L2D(BALL_CATCH_HEIGHT)) && isDone(DJmotor[1].valNow.angle_deg, L2D(BALL_CATCH_LENTH)))
             DoneSignal = true;
     }
     break;
 
     case BALL_LIFT:
     {
-        DJmotor[0].posPID.SetVal = L2D(BALL_LIFT_HEIGHT);
+        DJmotor[0].valSet.angle_deg= L2D(BALL_LIFT_HEIGHT);
         if (isDone(DJmotor[0].valNow.angle_deg, L2D(BALL_LIFT_HEIGHT)))
             DoneSignal = true;
     }
@@ -101,7 +102,7 @@ void state_func(STATEMODE state_mode) // 负责设定PID的目标值
 
     case BALL_DROP:
     {
-        DJmotor[0].posPID.SetVal = L2D(GROUND_DROP_HEIGHT);
+        DJmotor[0].valSet.angle_deg= L2D(GROUND_DROP_HEIGHT);
         if (isDone(DJmotor[0].valNow.angle_deg, L2D(GROUND_DROP_HEIGHT)))
             DoneSignal = true;
     }

@@ -22,9 +22,9 @@ void BeepAlarmTask(void *argument)
     for (i = 0; i < BeepAlarmTimes; i++)
     {
       BEEP_ON();
-      osDelay(40);
+      osDelay(250);
       BEEP_OFF();
-      osDelay(40);
+      osDelay(250);
       if(i==(BeepAlarmTimes-1))
       BeepAlarmTimes=0;
     }
