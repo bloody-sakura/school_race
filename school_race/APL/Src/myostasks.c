@@ -38,7 +38,6 @@ void State_Run_Task(void *argument)
     {
       state_mode.cur_mode = state_mode.set_mode;
     }
-
     state_func(state_mode);
     vTaskDelayUntil(&xLastWakeTime, xFrequency);
   }
