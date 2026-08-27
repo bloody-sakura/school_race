@@ -139,14 +139,12 @@ void state_func(STATEMODE statemode) // 负责设定PID的目标值
 
 void state_receive(CAN_RxHeaderTypeDef Rxheader, uint8_t *Rx_data)
 {
-    if ((Rxheader.IDE != CAN_ID_EXT) ||
-        (Rxheader.RTR != CAN_RTR_DATA) ||
-        (Rxheader.StdId < 0x01010401) || (Rxheader.StdId > 0x01010408))
+    if ((Rxheader.IDE != CAN_ID_EXT) ||(Rxheader.ExtId < 0x01010401) || (Rxheader.ExtId > 0x01010408))
     {
         return;
     }
 
-    uint8_t msg = (uint8_t)(Rxheader.ExtId - 0x0101040U); /* 1..8 */
+        uint8_t msg = (uint8_t)(Rxheader.ExtId - 0x01010400U); /* 1..8 */
     switch (msg)
     {
     case 1:

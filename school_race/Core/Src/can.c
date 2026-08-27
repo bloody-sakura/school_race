@@ -82,9 +82,9 @@ void MX_CAN1_Init(void)
   //0x000-0x7FF 11位标准帧
   //0x00000000-0x1FFFFFFF 29位扩展帧
   CAN_FilterConfig.FilterIdHigh = (((0x01010400<<3)|4)>>16);                   // 基准高位 FR0高16位
-  CAN_FilterConfig.FilterMaskIdHigh = (((0xFFFFFF00<<3)|4)>>16);               // 掩码高位 FR1高16位
+  CAN_FilterConfig.FilterMaskIdHigh = (((0x1FFFFF00<<3)|4)>>16);               // 掩码高位 FR1高16位
   CAN_FilterConfig.FilterIdLow = (((0x01010400<<3)|4)&0xFFFF);                    // 基准低位 FR0低16位
-  CAN_FilterConfig.FilterMaskIdLow = (((0xFFFFFF00<<3)|4)&0xFFFF);               // 掩码低位 FR1低16位
+  CAN_FilterConfig.FilterMaskIdLow = (((0x1FFFFF00<<3)|4)&0xFFFF);               // 掩码低位 FR1低16位
   if (HAL_CAN_ConfigFilter(&hcan1, &CAN_FilterConfig) != HAL_OK) { // 应用硬件中
       Error_Handler();
   }
