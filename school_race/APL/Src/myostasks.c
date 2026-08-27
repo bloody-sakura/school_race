@@ -37,6 +37,7 @@ void State_Run_Task(void *argument)
     if (state_mode.cur_mode != state_mode.set_mode && DoneSignal == true)
     {
       state_mode.cur_mode = state_mode.set_mode;
+      //DoneSignal=0;
     }
     state_func(state_mode);
     vTaskDelayUntil(&xLastWakeTime, xFrequency);
