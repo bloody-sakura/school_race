@@ -26,6 +26,8 @@ bool isDone(float feedback, float target) // 判断电机是否运动到指定�
 
 void state_func(STATEMODE statemode) // 负责设定PID的目标值
 {
+    DJmotor[0].MODE_Set=DJ_Position;
+    DJmotor[1].MODE_Set=DJ_Position;
     switch (statemode.cur_mode)
     {
 
