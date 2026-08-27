@@ -199,5 +199,17 @@ void state_receive(CAN_RxHeaderTypeDef Rxheader, uint8_t *Rx_data)
             state_mode.set_mode = BALL_DROP;
     }
     break;
+    case 9:
+    {
+        if (Rx_data[0] == 'H' && Rx_data[1] == 'B')
+            state_mode.set_mode = BALL_LIFT;
+    }
+    break;
+    case 10:
+    {
+        if (Rx_data[0] == 'H' && Rx_data[1] == 'E')
+            state_mode.set_mode = GROUND_LIFT;
+    }
+    break;
     }
 }

@@ -18,9 +18,9 @@ void BeepAlarmTask(void *argument)
     for (i = 0; i < BeepAlarmTimes; i++)
     {
       BEEP_ON();
-      osDelay(250);
+      osDelay(100);
       BEEP_OFF();
-      osDelay(250);
+      osDelay(100);
       if(i==(BeepAlarmTimes-1))
       BeepAlarmTimes=0;
     }
@@ -37,6 +37,8 @@ void State_Run_Task(void *argument)
     if (state_mode.cur_mode != state_mode.set_mode && DoneSignal == true)
     {
       state_mode.cur_mode = state_mode.set_mode;
+      if(state_mode.set_mode==IDLE)
+      Beep_Alarm(2);
       //DoneSignal=0;
     }
     state_func(state_mode);
