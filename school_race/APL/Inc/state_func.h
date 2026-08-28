@@ -6,6 +6,7 @@
 #include "math.h"
 #include "Beep.h"
 #include "myostasks.h"
+#include "Solenoid.h"
 typedef enum
 {
     DISABLED = 0, // 失能
@@ -28,15 +29,18 @@ typedef struct
     MODE set_mode;
 } STATEMODE;
 
-#define GROUND_CATCH_HEIGHT 50.0 // 夹大地块抬升高度
-#define GROUND_CATCH_LENTH 1.0  // 夹大地块前伸长度
+#define HEIGHT_MOTOR 1
+#define LENTH_MOTOR 0
+
+#define GROUND_CATCH_HEIGHT -400 // 夹大地块抬升高度
+#define GROUND_CATCH_LENTH 0 // 夹大地块前伸长度-190
 #define GROUND_LIFT_HEIGHT 60.0  // 夹紧后大地块抬升高度
 #define GROUND_DROP_HEIGHT 20.0  // 大地块下放高度
 #define SKY_CATCH_HEIGHT 40.0    // 夹天空块抬升高度
-#define SKY_CATCH_LENTH 1.0     // 夹天空块前伸长度
+#define SKY_CATCH_LENTH  0   // 夹天空块前伸长度
 #define SKY_LIFT_HEIGHT 80.0     // 夹紧后天空块抬升使与吸盘能配合的高度
 #define BALL_CATCH_HEIGHT 50.0   // 夹球抬升高度
-#define BALL_CATCH_LENTH 1.0    // 夹球前伸长度
+#define BALL_CATCH_LENTH 0    // 夹球前伸长度
 #define BALL_LIFT_HEIGHT 70.0    // 夹紧后球抬升高度
 
 void state_func(STATEMODE state_mode);

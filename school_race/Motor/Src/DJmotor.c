@@ -33,7 +33,7 @@ static inline float Get_Total_Ratio(DJMotorPointer motor)
 #if M3508_NUM > 0
 static inline bool is_M3508(uint8_t ID)
 {
-    return (ID > M2006_NUM);
+    return (ID <= M3508_NUM);
 }
 #else
 static inline bool is_M3508(uint8_t ID)
@@ -121,7 +121,7 @@ void DJmotor_Init(void)
     for (uint32_t i = 0; i < USE_DJNUM; i++)
     {
         PID_Init(&DJmotor[i].posPID, 0.07f, 0.0005f, 0.0f, PIDPOS);
-        PID_Init(&DJmotor[i].velPID, 5.5f, 0.3f, 0.01f, PIDINC);
+        PID_Init(&DJmotor[i].velPID, 4.0f, 0.3f, 0.01f, PIDINC);
     }
 }
 

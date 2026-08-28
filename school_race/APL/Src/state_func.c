@@ -4,17 +4,24 @@ STATEMODE state_mode =
         .cur_mode = DISABLED,
         .set_mode = DISABLED,
 };
+float H2D(float height) // 将运动的距离转化成要转角度
+{
+    return (height/(34*3.14159)*360);
+}
+
 float L2D(float lenth) // 将运动的距离转化成要转角度
 {
-    return (lenth);
+    return (lenth/(44*3.14159)*360);
 }
 
 void claw_on() // 打开夹爪
 {
+    solenoid_on(3,0x01);
 }
 
 void claw_off() // 闭合夹爪
 {
+    solenoid_on(3,0x00);
 }
 bool DoneSignal = false;                  // 判断是否完成指定模式的标志
 bool isDone(float feedback, float target) // 判断电机是否运动到指定位置附近（防抖）
@@ -26,25 +33,25 @@ bool isDone(float feedback, float target) // 判断电机是否运动到指定�
 
 void state_func(STATEMODE statemode) // 负责设定PID的目标值
 {
-    DJmotor[0].MODE_Set=DJ_Position;
-    DJmotor[1].MODE_Set=DJ_Position;
+    DJmotor[HEIGHT_MOTOR].MODE_Set=DJ_Position;
+    DJmotor[LENTH_MOTOR].MODE_Set=DJ_Position;
     switch (statemode.cur_mode)
     {
 
     case DISABLED:
     {
-        DJmotor[0].Begin = 0;
-        DJmotor[1].Begin = 0;
+        DJmotor[HEIGHT_MOTOR].Begin = 0;
+        DJmotor[LENTH_MOTOR].Begin = 0;
         DoneSignal = true;
     }
     break;
     case IDLE:
     {
-        DJmotor[0].Begin = 1;
-        DJmotor[1].Begin = 1;
-        DJmotor[0].valSet.angle_deg = 0;
+        DJmotor[HEIGHT_MOTOR].Begin = 1;
+        DJmotor[LENTH_MOTOR].Begin = 1;
+        DJmotor[HEIGHT_MOTOR].valSet.angle_deg = 0;
 
-        DJmotor[1].valSet.angle_deg = 0;
+        DJmotor[LENTH_MOTOR].valSet.angle_deg = 0;
         if (isDone(DJmotor[0].valNow.angle_deg, 0) && isDone(DJmotor[1].valNow.angle_deg, 0))
             DoneSignal = true;
     }
@@ -52,71 +59,71 @@ void state_func(STATEMODE statemode) // 负责设定PID的目标值
 
     case GROUND_CATCH:
     {
-        DJmotor[0].valSet.angle_deg = L2D(GROUND_CATCH_HEIGHT);
+        DJmotor[HEIGHT_MOTOR].valSet.angle_deg = H2D(GROUND_CATCH_HEIGHT);
 
-        DJmotor[1].valSet.angle_deg = L2D(GROUND_CATCH_LENTH);
-        if (isDone(DJmotor[0].valNow.angle_deg, L2D(GROUND_CATCH_HEIGHT)) && isDone(DJmotor[1].valNow.angle_deg, L2D(GROUND_CATCH_LENTH)))
+        DJmotor[LENTH_MOTOR].valSet.angle_deg = L2D(GROUND_CATCH_LENTH);
+        if (isDone(DJmotor[HEIGHT_MOTOR].valNow.angle_deg, H2D(GROUND_CATCH_HEIGHT)) && isDone(DJmotor[LENTH_MOTOR].valNow.angle_deg, L2D(GROUND_CATCH_LENTH)))
             DoneSignal = true;
     }
     break;
 
     case GROUND_LIFT:
     {
-        DJmotor[0].valSet.angle_deg = L2D(GROUND_LIFT_HEIGHT);
-        if (isDone(DJmotor[0].valNow.angle_deg, L2D(GROUND_LIFT_HEIGHT)))
+        DJmotor[HEIGHT_MOTOR].valSet.angle_deg = H2D(GROUND_LIFT_HEIGHT);
+        if (isDone(DJmotor[HEIGHT_MOTOR].valNow.angle_deg, H2D(GROUND_LIFT_HEIGHT)))
             DoneSignal = true;
     }
     break;
 
     case GROUND_DROP:
     {
-        DJmotor[0].valSet.angle_deg = L2D(GROUND_DROP_HEIGHT);
-        if (isDone(DJmotor[0].valNow.angle_deg, L2D(GROUND_DROP_HEIGHT)))
+        DJmotor[HEIGHT_MOTOR].valSet.angle_deg = H2D(GROUND_DROP_HEIGHT);
+        if (isDone(DJmotor[HEIGHT_MOTOR].valNow.angle_deg, H2D(GROUND_DROP_HEIGHT)))
             DoneSignal = true;
     }
     break;
 
     case SKY_CATCH:
     {
-        DJmotor[0].valSet.angle_deg = L2D(SKY_CATCH_HEIGHT);
+        DJmotor[HEIGHT_MOTOR].valSet.angle_deg = H2D(SKY_CATCH_HEIGHT);
 
-        DJmotor[1].valSet.angle_deg = L2D(SKY_CATCH_LENTH);
-        if (isDone(DJmotor[0].valNow.angle_deg, L2D(SKY_CATCH_HEIGHT)) && isDone(DJmotor[1].valNow.angle_deg, L2D(SKY_CATCH_LENTH)))
+        DJmotor[LENTH_MOTOR].valSet.angle_deg = L2D(SKY_CATCH_LENTH);
+        if (isDone(DJmotor[HEIGHT_MOTOR].valNow.angle_deg, H2D(SKY_CATCH_HEIGHT)) && isDone(DJmotor[LENTH_MOTOR].valNow.angle_deg, L2D(SKY_CATCH_LENTH)))
             DoneSignal = true;
     }
     break;
 
     case SKY_LIFT:
     {
-        DJmotor[0].valSet.angle_deg = L2D(SKY_LIFT_HEIGHT);
-        if (isDone(DJmotor[0].valNow.angle_deg, L2D(SKY_LIFT_HEIGHT)))
+        DJmotor[HEIGHT_MOTOR].valSet.angle_deg = H2D(SKY_LIFT_HEIGHT);
+        if (isDone(DJmotor[HEIGHT_MOTOR].valNow.angle_deg, H2D(SKY_LIFT_HEIGHT)))
             DoneSignal = true;
     }
     break;
 
     case BALL_CATCH:
     {
-        DJmotor[0].valSet.angle_deg = L2D(BALL_CATCH_HEIGHT);
+        DJmotor[HEIGHT_MOTOR].valSet.angle_deg = H2D(BALL_CATCH_HEIGHT);
 
-        DJmotor[1].valSet.angle_deg = L2D(BALL_CATCH_LENTH);
+        DJmotor[LENTH_MOTOR].valSet.angle_deg = L2D(BALL_CATCH_LENTH);
 
-        if (isDone(DJmotor[0].valNow.angle_deg, L2D(BALL_CATCH_HEIGHT)) && isDone(DJmotor[1].valNow.angle_deg, L2D(BALL_CATCH_LENTH)))
+        if (isDone(DJmotor[HEIGHT_MOTOR].valNow.angle_deg, H2D(BALL_CATCH_HEIGHT)) && isDone(DJmotor[LENTH_MOTOR].valNow.angle_deg, L2D(BALL_CATCH_LENTH)))
             DoneSignal = true;
     }
     break;
 
     case BALL_LIFT:
     {
-        DJmotor[0].valSet.angle_deg = L2D(BALL_LIFT_HEIGHT);
-        if (isDone(DJmotor[0].valNow.angle_deg, L2D(BALL_LIFT_HEIGHT)))
+        DJmotor[HEIGHT_MOTOR].valSet.angle_deg = H2D(BALL_LIFT_HEIGHT);
+        if (isDone(DJmotor[HEIGHT_MOTOR].valNow.angle_deg, H2D(BALL_LIFT_HEIGHT)))
             DoneSignal = true;
     }
     break;
 
     case BALL_DROP:
     {
-        DJmotor[0].valSet.angle_deg = L2D(GROUND_DROP_HEIGHT);
-        if (isDone(DJmotor[0].valNow.angle_deg, L2D(GROUND_DROP_HEIGHT)))
+        DJmotor[HEIGHT_MOTOR].valSet.angle_deg = H2D(GROUND_DROP_HEIGHT);
+        if (isDone(DJmotor[HEIGHT_MOTOR].valNow.angle_deg, H2D(GROUND_DROP_HEIGHT)))
             DoneSignal = true;
     }
     break;
